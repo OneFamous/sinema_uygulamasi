@@ -13,55 +13,95 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xff191826),
-      appBar: AppBar(
+    return MaterialApp(
+      home: Scaffold(
         backgroundColor: Color(0xff191826),
-        title: Text(
-          'FİLMLER',
-          style: TextStyle(
-            fontSize: 25,
-            color: Color(0xfff43370),
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Color(0xff191826),
+          title: Text(
+            'FİLMLER',
+            style: TextStyle(
+              fontSize: 25,
+              color: Colors.white,
+            ),
           ),
+          elevation: 0.0,
         ),
-        elevation: 0.0,
-        centerTitle: false,
-      ),
-      body: FutureBuilder(
-        future: fetchMovies(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text("HATA!"),
-            );
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+        body: FutureBuilder(
+          future: fetchMovies(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text("HATA!"),
+              );
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
 
-          if (snapshot.hasData) {
-            return ListView.builder(
-              shrinkWrap: true,
-              itemCount: snapshot.data.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Row(
-                  children: [
-                    Container(
-                      child: Card(
-                        child: Image.network("https://image.tmdb.org/t/p/w500" +
-                            snapshot.data[index]["poster_path"]),
+            if (snapshot.hasData) {
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Row(
+                    children: [
+                      Container(
+                        height: 250,
+                        alignment: Alignment.centerLeft,
+                        child: Card(
+                          child: Image.network(
+                              "https://image.tmdb.org/t/p/w500" +
+                                  snapshot.data[index]["poster_path"]),
+                        ),
                       ),
-                    ),
-                    Container(),
-                  ],
-                );
-              },
-            );
-          }
-          return Container();
-        },
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 20.0,
+                              ),
+                              Text(
+                                snapshot.data[index]["original_title"],
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                snapshot.data[index]["release_date"],
+                                style: TextStyle(color: Color(0xff868597)),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                height: 200,
+                                child: Text(
+                                  snapshot.data[index]["overview"],
+                                  style: TextStyle(color: Color(0xff868597)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            }
+            return Container();
+          },
+        ),
       ),
     );
   }
